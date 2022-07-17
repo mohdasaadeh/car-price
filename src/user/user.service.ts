@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './user.entity';
 
-interface UserProps {
+export interface UserProps {
   id?: number;
   email?: string;
   password?: string;
@@ -28,8 +28,8 @@ export class UserService {
     return this.repo.findOneBy({ id });
   }
 
-  findBy(attrs: UserProps): Promise<User[]> {
-    return this.repo.find({ where: attrs });
+  findOneBy(attrs: UserProps): Promise<User> {
+    return this.repo.findOneBy(attrs);
   }
 
   async findByIdAndUpdate(id: number, attrs: UserProps): Promise<User> {

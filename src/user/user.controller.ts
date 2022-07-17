@@ -14,14 +14,23 @@ import { EditUserDto } from './dtos/edit_user.dto';
 import { UserService } from './user.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {}
 
   @Post('signup')
   createUser(@Body() body: CreateUserDto) {
-    this.userService.insert(body);
+    return this.authService.signup(body);
+  }
+
+  @Post('signin')
+  getUser(@Body() body: CreateUserDto) {
+    return this.authService.signin(body);
   }
 
   @Serialize(UserDto)
@@ -31,8 +40,8 @@ export class UserController {
   }
 
   @Get('by_email')
-  findUsersByEmail(@Query('email') email: string) {
-    return this.userService.findBy({ email });
+  findUserByEmail(@Query('email') email: string) {
+    return this.userService.findOneBy({ email });
   }
 
   @Get(':id')
@@ -42,11 +51,11 @@ export class UserController {
 
   @Patch(':id/edit')
   editUser(@Param('id') id: string, @Body() body: EditUserDto) {
-    this.userService.findByIdAndUpdate(parseInt(id), body);
+    return this.userService.findByIdAndUpdate(parseInt(id), body);
   }
 
   @Delete(':id/delete')
   deleteUser(@Param('id') id: string) {
-    this.userService.findByIdAndDelete(parseInt(id));
+    return this.userService.findByIdAndDelete(parseInt(id));
   }
 }
