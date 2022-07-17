@@ -12,6 +12,8 @@ import {
 import { CreateUserDto } from './dtos/create-user.dto';
 import { EditUserDto } from './dtos/edit_user.dto';
 import { UserService } from './user.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from './dtos/user.dto';
 
 @Controller('users')
 export class UserController {
@@ -22,6 +24,7 @@ export class UserController {
     this.userService.insert(body);
   }
 
+  @Serialize(UserDto)
   @Get()
   findUsers() {
     return this.userService.find();
