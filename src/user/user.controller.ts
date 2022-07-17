@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { CreateUserDto } from './dtos/create-user.dto';
+import { EditUserDto } from './dtos/edit_user.dto';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -37,7 +38,7 @@ export class UserController {
   }
 
   @Patch(':id/edit')
-  editUser(@Param('id') id: string, @Body() body: CreateUserDto) {
+  editUser(@Param('id') id: string, @Body() body: EditUserDto) {
     this.userService.findByIdAndUpdate(parseInt(id), body);
   }
 
