@@ -11,6 +11,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ReportModule } from './report/report.module';
 import { User } from './user/user.entity';
+import { Report } from './report/report.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { User } from './user/user.entity';
           type: 'sqlite',
           database: config.get<string>('DB_NAME'),
           synchronize: true,
-          entities: [User],
+          entities: [User, Report],
         };
       },
     }),
