@@ -16,15 +16,44 @@ describe('Authentication Routes (e2e)', () => {
     await app.init();
   });
 
-  it('/users/signup (POST)', () => {
-    const email = 'test@test.com';
+  it('/users/signup (POST)', async () => {
+    const testEmail = 'test@test.com';
 
-    return request(app.getHttpServer())
+    const res = await request(app.getHttpServer())
       .post('/users/signup')
-      .send({ email, password: '123' })
-      .expect(201)
-      .then((res) => {
-        expect(res.body.email).toEqual(email);
-      });
+      .send({ email: testEmail, password: '123' })
+      .expect(201);
+
+    const { id, email } = res.body;
+
+    expect(id).toBeDefined;
+    expect(email).toEqual(testEmail);
+    expect(res.get('Set-Cookie')).toBeDefined();
+  });
+
+  it('the whole authentication process works successfully', async () => {
+    const testEmail = 'test@test.com';
+
+    await request(app.getHttpServer())
+      .post('/users/signup')
+      .send({ email: testEmail, password: '123' })
+      .expect(201);
+
+    const signoutRes = await request(app.getHttpServer())
+      .post('/users/signout')
+      .expect(201);
+
+    expect(signoutRes.get('Set-Cookie')).toBeDefined();
+
+    const signinRes = await request(app.getHttpServer())
+      .post('/users/signin')
+      .send({ email: testEmail, password: '123' })
+      .expect(201);
+
+    const { id, email } = signinRes.body;
+
+    expect(id).toBeDefined;
+    expect(email).toEqual(testEmail);
+    expect(signinRes.get('Set-Cookie')).toBeDefined();
   });
 });
