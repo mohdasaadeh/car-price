@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -25,6 +25,22 @@ export class ReportService {
     const report = this.repo.create(reportData);
 
     report.user = user;
+
+    return this.repo.save(report);
+  }
+
+  async approve(id: number) {
+    const report = await this.repo.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+
+    if (!report)
+      throw new BadRequestException(
+        'The fetched report cannot be found, please make sure to search for the right ID.',
+      );
+
+    report.approved = true;
 
     return this.repo.save(report);
   }
